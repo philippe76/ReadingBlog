@@ -10,8 +10,24 @@
         <div class="content">
             <p><%= blog.body %></p>
         </div>
+        <a class="delete" data-doc="<%= blog._id %>">delete</a>
     </div>
 
     <%- include('./partials/footer.ejs') %>
+
+    <script>
+        const deleteItem = document.querySelector('a.delete');
+        deleteItem.addEventListener('click', () => {
+            const endPoint = `/blogs/${deleteItem.dataset.doc}`;
+
+            // this fetch method send a delete request to our server, which delete the item and then send us back a json object with the route to redirect from here
+            // then we redirect from here with 'window.location.href'
+
+            fetch(endPoint, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => window.location.href = data.redirect)
+                .catch( err => console.log(err))
+        })
+    </script>
 </body>
 </html>

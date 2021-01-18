@@ -47,7 +47,7 @@ app.get('/blogs/:id', (req, res) => {
 })
 
 
-// **** POST ROUTES **** //
+// **** POST ROUTE **** //
 app.post('/blogs', (req, res) => {
     const blog = new Blog(req.body);
     blog.save()
@@ -56,6 +56,12 @@ app.post('/blogs', (req, res) => {
 })
 
 
+// **** DELETE ROUTE **** //
+app.delete('/blogs/:id', (req, res) => {
+    Blog.findByIdAndDelete(req.params.id)
+        .then( result => res.json({ redirect: '/blogs' }))
+        .catch( err => console.log(err))
+})
 
 app.use((req, res) => {
     res.status(404).render('404', {title: '404'})
