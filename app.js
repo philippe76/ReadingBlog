@@ -1,7 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const Blog = require('./models/blog');
+const blogRoutes = require('./routes/blogRoutes')
+
 
 const app = express();
 
@@ -13,13 +14,12 @@ mongoose.connect(dbURI, {useNewUrlParser: true, useUnifiedTopology: true})
 app.set('view engine', 'ejs');
 
 
-// ** middlewares ** //
+// ** Middlewares ** //
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }))
 //app.use(morgan('dev'));
 
-
-// **** GET ROUTES **** //
+// ** Routes ** //
 app.get('/', (req, res) => {
     res.redirect('/blogs')
 })
@@ -28,40 +28,9 @@ app.get('/about', (req, res) => {
     res.render('about', {title: 'About'})
 })
 
-app.get('/blogs/create', (req, res) => {
-    res.render('create', {title: 'Create a new Blog'})
-})
+// ** blog Routes ** //
+app.use('/blogs', blogRoutes)
 
-app.get('/blogs', (req, res) => {
-    Blog.find().sort({ createdAt: -1 })
-        .then( result => {
-            res.render('index', {title: 'All Blogs', blogs: result})
-        })
-        .catch( err => console.log(err))
-})
-
-app.get('/blogs/:id', (req, res) => {
-    Blog.findById(req.params.id)
-        .then( result => res.render('details', { title: 'Blog details', blog: result }) )
-        .catch( err => console.log(err))
-})
-
-
-// **** POST ROUTE **** //
-app.post('/blogs', (req, res) => {
-    const blog = new Blog(req.body);
-    blog.save()
-        .then( result => res.redirect('/blogs'))
-        .catch( err => console.log(err))
-})
-
-
-// **** DELETE ROUTE **** //
-app.delete('/blogs/:id', (req, res) => {
-    Blog.findByIdAndDelete(req.params.id)
-        .then( result => res.json({ redirect: '/blogs' }))
-        .catch( err => console.log(err))
-})
 
 app.use((req, res) => {
     res.status(404).render('404', {title: '404'})
