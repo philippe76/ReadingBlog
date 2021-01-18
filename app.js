@@ -23,11 +23,9 @@ app.use(express.urlencoded({ extended: true }))
 app.get('/', (req, res) => {
     res.redirect('/blogs')
 })
-
 app.get('/about', (req, res) => {
     res.render('about', {title: 'About'})
 })
-
 // ** blog Routes ** //
 app.use('/blogs', blogRoutes)
 
